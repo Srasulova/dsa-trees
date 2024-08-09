@@ -81,6 +81,45 @@ class BinaryTree {
     );
   }
 
+  static serialize(tree) {
+    function helper(node) {
+      if (!node) return "null";
+      return `${node.val},${helper(node.left)},${helper(node.right)}`;
+    }
+    return helper(tree.root);
+  }
+
+  static deserialize(data) {
+    const values = data.split(",");
+
+    function helper() {
+      const val = values.shift();
+      if (val === "null") return null;
+
+      const node = new BinaryTreeNode(parseInt(val));
+      node.left = helper();
+      node.right = helper();
+      return node;
+    }
+
+    const root = helper();
+    return new BinaryTree(root);
+  }
+
+  lowestCommonAncestor(node1, node2) {
+    function helper(node) {
+      if (!node || node === node1 || node === node2) return node;
+
+      const left = helper(node.left);
+      const right = helper(node.right);
+
+      if (left && right) return node;
+      return left ? left : right;
+    }
+
+    return helper(this.root);
+  }
+
   /** nextLarger(lowerBound): return the smallest value in the tree
    * which is larger than lowerBound. Return null if no such value exists. */
   nextLarger(lowerBound, node = this.root) {
